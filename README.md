@@ -24,7 +24,8 @@ Possibilité d'affiché un print_r dans la barre de débug en utilisant la fonct
 Prestashop 1.5 seulement
 
 
-
+##### Crédits
+---
 http://www.prestaspirit.fr
 
 @author Pichard Franck - PrestaSpirit <contact@prestaspirit.fr>
