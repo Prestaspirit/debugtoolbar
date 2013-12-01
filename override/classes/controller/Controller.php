@@ -123,6 +123,7 @@ function FileSizeConvert($bytes)
             ),
         );
 
+    $result = '';
     foreach($arBytes as $arItem)
     {
         if($bytes >= $arItem["VALUE"])
@@ -571,9 +572,9 @@ abstract class Controller extends ControllerCore
 		}
 		foreach ($array_queries as $data)
 		{
+			$filestortGroup = '';
 			if (preg_match('/^\s*select\s+/i', $data['query']))
 			{
-				$filestortGroup = '';
 				if ($data['filesort'])
 					$filestortGroup .= '<b '.$this->getTimeColor($data['time'] * 1000).'>USING FILESORT</b> - ';
 				$filestortGroup .= $this->displayRowsBrowsed($data['rows']);
@@ -776,6 +777,300 @@ abstract class Controller extends ControllerCore
 		}
 		/* /DEBUG */
 
+		/* PS INFOS */
+		if (isset($this->context->employee->id)) :
+			$ps_infos = array(
+				'version' => array(
+					'php'                => phpversion(),
+					'server'             => $_SERVER['SERVER_SOFTWARE'],
+					'memory_limit'       => ini_get('memory_limit'),
+					'max_execution_time' => ini_get('max_execution_time')
+				),
+				'database' => array(
+					'version' => Db::getInstance()->getVersion(),
+					'prefix'  => _DB_PREFIX_,
+					'engine'  => _MYSQL_ENGINE_,
+				),
+				'uname' => function_exists('php_uname') ? php_uname('s').' '.php_uname('v').' '.php_uname('m') : '',
+				'apache_instaweb' => Tools::apacheModExists('mod_instaweb'),
+				'shop' => array(
+					'ps'    => _PS_VERSION_,
+					'url'   => Tools::getHttpHost(true).__PS_BASE_URI__,
+					'theme' => _THEME_NAME_,
+				),
+				'mail' => Configuration::get('PS_MAIL_METHOD') == 1,
+				'smtp' => array(
+					'server'     => Configuration::get('PS_MAIL_SERVER'),
+					'user'       => Configuration::get('PS_MAIL_USER'),
+					'password'   => Configuration::get('PS_MAIL_PASSWD'),
+					'encryption' => Configuration::get('PS_MAIL_SMTP_ENCRYPTION'),
+					'port'       => Configuration::get('PS_MAIL_SMTP_PORT'),
+				),
+				'user_agent' => $_SERVER['HTTP_USER_AGENT'],
+			);
+
+			$tests                   = ConfigurationTest::getDefaultTests();
+			$tests_op                = ConfigurationTest::getDefaultTestsOp();
+			$params_required_results = ConfigurationTest::check($tests);
+			$params_optional_results = ConfigurationTest::check($tests_op);
+
+			$tests_errors = array(
+				'phpversion' => 'Update your PHP version',
+				'upload' => 'Configure your server to allow file uploads',
+				'system' => 'Configure your server to allow the creation of directories and files with write permissions.',
+				'gd' => 'Enable the GD library on your server.',
+				'mysql_support' => 'Enable the MySQL support on your server.',
+				'config_dir' => 'Set write permissions for the "config" folder.',
+				'cache_dir' => 'Set write permissions for the "cache" folder.',
+				'sitemap' => 'Set write permissions for the "sitemap.xml" file.',
+				'img_dir' => 'Set write permissions for the "img" folder and subfolders.',
+				'log_dir' => 'Set write permissions for the "log" folder and subfolders.',
+				'mails_dir' => 'Set write permissions for the "mails" folder and subfolders.',
+				'module_dir' => 'Set write permissions for the "modules" folder and subfolders.',
+				'theme_lang_dir' => 'Set the write permissions for the "themes'._THEME_NAME_.'/lang/" folder and subfolders, recursively.',
+				'translations_dir' => 'Set write permissions for the "translations" folder and subfolders.',
+				'customizable_products_dir' => 'Set write permissions for the "upload" folder and subfolders.',
+				'virtual_products_dir' => 'Set write permissions for the "download" folder and subfolders.',
+				'fopen' => 'Allow the PHP fopen() function on your server',
+				'register_globals' => 'Set PHP "register_global" option to "Off"',
+				'gz' => 'Enable GZIP compression on your server.'
+			);
+
+			$output .= '				<div class="debugtoolbar-tab-pane debugtoolbar-table debugtoolbar-ps-info">';
+			$output .= "
+											<script type=\"text/javascript\">
+												$(document).ready(function()
+												{
+													$.ajax({
+														type: 'GET',
+														url: '".$this->context->link->getAdminLink('AdminInformation')."',
+														data: {
+															'action': 'checkFiles',
+															'ajax': 1
+														},
+														dataType: 'json',
+														success: function(json)
+														{
+															var tab = {
+																'missing': 'Missing files',
+																'updated': 'Updated files'
+															};
+
+															if (json.missing.length || json.updated.length)
+																$('#changedFilesDebugtoolbar').html('<div style=\"color:#ef8400;\">Changed/missing files have been detected.</div>');
+															else
+																$('#changedFilesDebugtoolbar').html('<div style=\"color:#0080b0;\">No change has been detected in your files</div>');
+
+															$.each(tab, function(key, lang)
+															{
+																if (json[key].length)
+																{
+																	var html = $('<ul>').attr('id', key+'_files');
+																	$(json[key]).each(function(key, file)
+																	{
+																		html.append($('<li>').html(file))
+																	});
+																	$('#changedFilesDebugtoolbar')
+																		.append($('<h3>').html(lang+' ('+json[key].length+')'))
+																		.append(html);
+																}
+															});
+														}
+													});
+												});
+											</script>
+			";
+			$output .= '					<table>
+												<tr>
+													<th>Name</th>
+													<th>Value</th>
+												</tr>
+			';
+			$output .= '
+												<tr>
+													<td class="debugtoolbar-table-title" colspan="2"><strong>Server Informations</strong></td>
+												</tr>
+												<tr>
+													<td class="debugtoolbar-table-first">Server</td>
+													<td><pre>'.htmlspecialchars($ps_infos['uname'], ENT_NOQUOTES, 'utf-8', false).'</pre></td>
+												</tr>
+												<tr>
+													<td class="debugtoolbar-table-first">Logiciel Serveur</td>
+													<td><pre>'.htmlspecialchars($ps_infos['version']['server'], ENT_NOQUOTES, 'utf-8', false).'</pre></td>
+												</tr>
+												<tr>
+													<td class="debugtoolbar-table-first">PHP Version</td>
+													<td><pre>'.htmlspecialchars($ps_infos['version']['php'], ENT_NOQUOTES, 'utf-8', false).'</pre></td>
+												</tr>
+												<tr>
+													<td class="debugtoolbar-table-first">Memory Limit</td>
+													<td><pre>'.htmlspecialchars($ps_infos['version']['memory_limit'], ENT_NOQUOTES, 'utf-8', false).'</pre></td>
+												</tr>
+												<tr>
+													<td class="debugtoolbar-table-first">Max Execution Time</td>
+													<td><pre>'.htmlspecialchars($ps_infos['version']['max_execution_time'], ENT_NOQUOTES, 'utf-8', false).'</pre></td>
+												</tr>
+			';
+			$output .= '
+												<tr>
+													<td class="debugtoolbar-table-title" colspan="2"><strong>Database Informations</strong></td>
+												</tr>
+												<tr>
+													<td class="debugtoolbar-table-first">MySQL Version</td>
+													<td><pre>'.htmlspecialchars($ps_infos['database']['version'], ENT_NOQUOTES, 'utf-8', false).'</pre></td>
+												</tr>
+												<tr>
+													<td class="debugtoolbar-table-first">MySQL Engine</td>
+													<td><pre>'.htmlspecialchars($ps_infos['database']['engine'], ENT_NOQUOTES, 'utf-8', false).'</pre></td>
+												</tr>
+												<tr>
+													<td class="debugtoolbar-table-first">MySQL Prefix</td>
+													<td><pre>'.htmlspecialchars($ps_infos['database']['prefix'], ENT_NOQUOTES, 'utf-8', false).'</pre></td>
+												</tr>
+			';
+			$output .= '
+												<tr>
+													<td class="debugtoolbar-table-title" colspan="2"><strong>Store Informations</strong></td>
+												</tr>
+												<tr>
+													<td class="debugtoolbar-table-first">PrestaShop Version</td>
+													<td><pre>'.htmlspecialchars($ps_infos['shop']['ps'], ENT_NOQUOTES, 'utf-8', false).'</pre></td>
+												</tr>
+												<tr>
+													<td class="debugtoolbar-table-first">Store Url</td>
+													<td><pre>'.htmlspecialchars($ps_infos['shop']['url'], ENT_NOQUOTES, 'utf-8', false).'</pre></td>
+												</tr>
+												<tr>
+													<td class="debugtoolbar-table-first">Themes Use</td>
+													<td><pre>'.htmlspecialchars($ps_infos['shop']['theme'], ENT_NOQUOTES, 'utf-8', false).'</pre></td>
+												</tr>
+			';
+			if(!empty($ps_infos['mail'])) :
+				$output .= '
+												<tr>
+													<td class="debugtoolbar-table-title" colspan="2"><strong>Email Setting</strong></td>
+												</tr>
+												<tr>
+													<td><pre>You are using the PHP mail function.</pre></td>
+												</tr>
+				';
+			else :
+				$output .= '
+												<tr>
+													<td class="debugtoolbar-table-title" colspan="2"><strong>Email Setting</strong></td>
+												</tr>
+												<tr>
+													<td class="debugtoolbar-table-first">SMTP Server</td>
+													<td><pre>'.htmlspecialchars($ps_infos['smtp']['server'], ENT_NOQUOTES, 'utf-8', false).'</pre></td>
+												</tr>
+												<tr>
+													<td class="debugtoolbar-table-first">Cryptage</td>
+													<td><pre>'.htmlspecialchars($ps_infos['smtp']['encryption'], ENT_NOQUOTES, 'utf-8', false).'</pre></td>
+												</tr>
+												<tr>
+													<td class="debugtoolbar-table-first">Port</td>
+													<td><pre>'.htmlspecialchars($ps_infos['smtp']['port'], ENT_NOQUOTES, 'utf-8', false).'</pre></td>
+												</tr>
+												<tr>
+													<td class="debugtoolbar-table-first">Login</td>
+													<td><pre>'.(!empty($ps_infos['smtp']['user']) ? '<span style="color:#90bd00;font-weight:bold;">OK</span>' : '<span style="color:#ff4141;font-weight:bold;">Not defined</span>').'</pre></td>
+												</tr>
+												<tr>
+													<td class="debugtoolbar-table-first">Password</td>
+													<td><pre>'.(!empty($ps_infos['smtp']['password']) ? '<span style="color:#90bd00;font-weight:bold;">OK</span>' : '<span style="color:#ff4141;font-weight:bold;">Not defined</span>').'</pre></td>
+												</tr>
+				';
+			endif;
+			$output .= '
+												<tr>
+													<td class="debugtoolbar-table-title" colspan="2"><strong>Your information</strong></td>
+												</tr>
+												<tr>
+													<td class="debugtoolbar-table-first">Your web browser</td>
+													<td><pre>'.htmlspecialchars($ps_infos['user_agent'], ENT_NOQUOTES, 'utf-8', false).'</pre></td>
+												</tr>
+			';
+			$output .= '
+												<tr>
+													<td class="debugtoolbar-table-title" colspan="2"><strong>Check your configuration</strong></td>
+												</tr>
+			';
+			$output .= '
+												<tr>
+													<td class="debugtoolbar-table-first">Required parameters</td>
+			';
+			if (!in_array('fail', $params_required_results)) :
+				$output .= '
+													<td><pre><span style="color:#90bd00;font-weight:bold;">OK</span></pre></td>
+				';
+			else : 
+				$output .= '
+													<td>
+														<pre><span style="color:#ff4141;font-weight:bold;">Please fix the following error(s)</span></pre>
+														<ul>
+				';
+				foreach ($params_required_results as $key => $value)
+					if ($value == 'fail')
+						$output .= '						<li>'.$tests_errors[$key].'</li>';
+				$output .= '
+														</ul>
+													</td>
+				';
+			endif;
+			$output .= '
+												</tr>
+			';
+			$output .= '
+												<tr>
+													<td class="debugtoolbar-table-first">Optional parameters</td>
+			';
+			if (!in_array('fail', $params_optional_results)) :
+				$output .= '
+													<td><pre><span style="color:#90bd00;font-weight:bold;">OK</span></pre></td>
+				';
+			else : 
+				$output .= '
+													<td>
+														<pre><span style="color:#ff4141;font-weight:bold;">Please fix the following error(s)</span></pre>
+														<ul>
+				';
+				foreach ($params_optional_results as $key => $value)
+					if ($value == 'fail')
+						$output .= '						<li>'.$key.'</li>';
+				$output .= '
+														</ul>
+													</td>
+				';
+			endif;
+			$output .= '
+												</tr>
+			';
+			$output .= '
+												<tr>
+													<td class="debugtoolbar-table-title" colspan="2"><strong>List of changed files</strong></td>
+												</tr>
+			';
+			$output .= '
+												<tr>
+													<td colspan="2"><div id="changedFilesDebugtoolbar"><img src="../img/admin/ajax-loader.gif" /> Checking files...</div></td>
+												</tr>
+			';
+			$output .= '
+											</table>
+			';
+			$output .= '				</div>';		
+		else :
+			$output .= '				<div class="debugtoolbar-tab-pane debugtoolbar-table debugtoolbar-ps-info">';
+			$output .= '					<table>
+												<tr>
+													<td><pre><span style="color:#ff4141;font-weight:bold;">Not display in Front office</span></pre></td>
+												</tr>
+											</table>
+										</div>
+			';
+		endif;
+		/* /PS INFOS */
+
 
 		$output .= '			</div>
 							</div>
@@ -817,6 +1112,10 @@ abstract class Controller extends ControllerCore
 								<!-- DATA -->
 								<li><a class="debugtoolbar-tab" data-debugtoolbar-tab="debugtoolbar-getpost-data">Data</a></li>
 								<!-- /DATA -->
+
+								<!-- PS INFOS -->
+								<li><a class="debugtoolbar-tab" data-debugtoolbar-tab="debugtoolbar-ps-info">Infos</a></li>
+								<!-- /PS INFOS -->
 		';
 		if(count($GLOBALS['debugtoolbar']))
 		{
