@@ -1,0 +1,235 @@
+.debugtoolbar * {
+	color: black;
+	border: 0 !important;
+}
+
+.debugtoolbar {
+	font-family:Helvetica, "Helvetica Neue", Arial, sans-serif !important;
+	font-size:14px !important;
+	background-color:#222 !important;
+	position:fixed !important;
+	bottom:0 !important;
+	right:0 !important;
+	width:100%;
+	z-index: 9999 !important;
+	color: #000;
+}
+
+.debugtoolbar-tabs {
+	margin:0 !important;
+	padding:0 !important;
+	overflow:hidden !important;
+	background-image: url('../img/logo.png');
+	background-repeat:no-repeat;
+	background-position:5px 0px;
+}
+
+.debugtoolbar-tab {
+	cursor: pointer;
+}
+
+.debugtoolbar-hidden .debugtoolbar-tabs {
+	background-image:none;
+}
+
+#debugtoolbar-open-tabs li:first-child {
+	margin-left:3em;
+}
+
+.debugtoolbar-tabs li {
+	display:inline;
+	float: left;
+	line-height:1em !important;
+}
+
+.debugtoolbar-tabs a, .debugtoolbar-tabs a:visited {
+	color:#aaa !important;
+	text-transform:uppercase !important;
+	font-weight:bold !important;
+	display:inline-block;
+	text-decoration:none !important;
+	font-size:0.8em !important;
+	padding: 0.8em 0.8em 0.7em 0.8em !important;
+	-webkit-transition-property:color, background-color;
+	-webkit-transition-duration: 0.7s, 0.2s;
+	-webkit-transition-timing-function: ease-in, ease-in;
+	-moz-transition-property:color, background-color;
+	-moz-transition-duration: 0.7s, 0.2s;
+	-moz-transition-timing-function: ease-in, ease-in;
+	-ms-transition-property:color, background-color;
+	-ms-transition-duration: 0.7s, 0.2s;
+	-ms-transition-timing-function: ease-in, ease-in;
+	-o-transition-property:color, background-color;
+	-o-transition-duration: 0.7s, 0.2s;
+	-o-transition-timing-function: ease-in, ease-in;
+	transition-property:color, background-color;
+	transition-duration: 0.7s, 0.2s;
+	transition-timing-function: ease-in, ease-in;
+}
+
+#debugtoolbar-closed-tabs a, #debugtoolbar-closed-tabs a:visited {
+	padding: 0.85em 1.2em 0.85em 1.2em !important;
+}
+
+.debugtoolbar-tabs a:hover {
+	background-color:#333 !important;
+	color:#fff !important;
+}
+
+.debugtoolbar-tabs a.debugtoolbar-active-tab {
+	color:#fff !important;
+	background-color:#333 !important;
+}
+
+.debugtoolbar a:focus {
+	outline:none !important;
+}
+
+.debugtoolbar-tabs a:active {
+	background-color:#111 !important;
+}
+
+.debugtoolbar-tabs li.debugtoolbar-tab-right {
+	float:right !important;
+}
+
+.debugtoolbar-tabs li.debugtoolbar-tab-right a, .debugtoolbar-tabs li.debugtoolbar-tab-right a:visited {
+	padding: 0.86em 2em 0.7em 2em !important;
+}
+
+#debugtoolbar-closed-tabs {
+	display:none;
+}
+
+
+.debugtoolbar-window {
+	display:none;
+}
+
+.debugtoolbar-content-area {
+	background-color: #fff !important;
+	background-image: -webkit-gradient(linear, left top, left bottom, from(#eeeeee), to(#ffffff));
+	background-image: -webkit-linear-gradient(top, #eeeeee, #ffffff);
+	background-image: -moz-linear-gradient(top, #eeeeee, #ffffff);
+	background-image: -ms-linear-gradient(top, #eeeeee, #ffffff);
+	background-image: -o-linear-gradient(top, #eeeeee, #ffffff);
+	background-image: linear-gradient(to bottom, #eeeeee, #ffffff);
+	height:14em;
+	margin-top:6px !important;
+	overflow-x:hidden !important;
+	overflow-y:auto !important;
+}
+
+.debugtoolbar-table table {
+	margin:0 !important;
+	padding:0 !important;
+	font-size:0.9em !important;
+	border:0 !important;
+	border-collapse:collapse !important;
+	width:100% !important;
+	background-color:#fff !important;
+}
+
+.debugtoolbar-table pre {
+	margin:0 !important;
+	font-size: 13px;
+	font-family: "Bitstream Vera Sans Mono","Liberation Mono",Consolas,Courier,monospace;
+}
+
+.debugtoolbar-table tr {
+	border-bottom:1px solid #ccc !important;
+}
+
+.debugtoolbar-table tr:first-child {
+	border:0 !important;
+}
+
+.debugtoolbar-table th {
+	background-color:#555 !important;
+	color:#fff !important;
+	text-transform:uppercase !important;
+}
+
+.debugtoolbar-table th, .debugtoolbar-table td {
+	text-align:left !important;
+	padding:0.4em 1em !important;
+	margin:0 !important;
+}
+
+.debugtoolbar-table td {
+	vertical-align:top !important;
+}
+
+.debugtoolbar-table .highlight {
+	font-weight: bold;
+}
+
+.debugtoolbar-table-first {
+	background-color:#eee !important;
+	border-right:1px solid #ccc !important;
+	width:11% !important;
+}
+
+.debugtoolbar-table-title {
+	background-color:#ddd !important;
+	border-right:1px solid #ccc !important;
+	width:11% !important;
+}
+
+.debugtoolbar-table-first-wide {
+	background-color:#eee !important;
+	border-right:1px solid #ccc !important;
+	width:70% !important;
+}
+
+span.debugtoolbar-count {
+	text-transform: none !important;
+	margin-left:0.5em !important;
+	background-color:#555 !important;
+	display:inline-block !important;
+	padding:0.1em 0.5em 0.2em 0.5em !important;
+	color:#eee !important;
+	text-shadow:0 0 4px #000 !important;
+	-webkit-border-radius: 1px;
+	-moz-border-radius: 1px;
+	border-radius: 1px;
+	-moz-background-clip: padding;
+	-webkit-background-clip: padding-box;
+	background-clip: padding-box;
+
+}
+
+.debugtoolbar-empty {
+	display:block !important;
+	padding:1em !important;
+	text-align:center !important;
+	font-style:italic !important;
+	color:#888 !important;
+	margin:1em !important;
+	text-shadow:0 1px 0px #fff !important;
+}
+
+.debugtoolbar pre {
+	overflow-x: auto;
+	white-space: pre-wrap;
+	white-space: -moz-pre-wrap !important;
+	white-space: -pre-wrap;
+	white-space: -o-pre-wrap;
+	word-wrap: break-word;
+}
+
+/* hide panel-open elements, will become visible through debugtoolbar.start() */
+#debugtoolbar-close, #debugtoolbar-zoom, .debugtoolbar-tab-pane {
+	visibility: hidden;
+}
+
+
+/***** Override the setting when the toolbar is on the top *****/
+
+
+/***** Media query *****/
+@media screen and (max-width: 980px) {
+	a[data-debugtoolbar-tab~="debugtoolbar-controller"] .debugtoolbar-count {
+		display: none !important;
+	}
+}
