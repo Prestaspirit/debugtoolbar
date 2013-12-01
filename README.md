@@ -1,0 +1,4 @@
+Debugtoolbar
+============
+
+Prestashop DebugToolBar
