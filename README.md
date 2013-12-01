@@ -32,6 +32,10 @@ http://www.prestaspirit.fr
 
 @copyright  20010-2013 PrestaSpirit
 
+CSS & JS [angelside](https://github.com/angelside)
+
+Source [Profiler for Laravel 4](https://github.com/juy/profiler)
+
 @version 1.0
 =======
 Debugtoolbar
