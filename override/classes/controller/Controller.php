@@ -30,7 +30,8 @@
 
 $GLOBALS['debugtoolbar'] = array();
 
-require_once(_PS_MODULE_DIR_.'debugtoolbar/debugtoolbar.php');
+if (file_exists(_PS_MODULE_DIR_.'debugtoolbar/debugtoolbar.php'))
+	require_once(_PS_MODULE_DIR_.'debugtoolbar/debugtoolbar.php');
 
 function developpementErrorHandler($errno, $errstr, $errfile, $errline)
 {
@@ -256,6 +257,9 @@ abstract class Controller extends ControllerCore
 
 	public function run()
 	{
+		if (!class_exists('DebugToolbar'))
+			return parent::run();
+			
 		if (!DebugToolbar::isEnable())
 			return parent::run();
 
@@ -721,12 +725,30 @@ abstract class Controller extends ControllerCore
 		{
 			foreach ($post as $name => $value)
 			{
-				$output .= '
-												<tr>
-													<td class="debugtoolbar-table-first">'.$name.'</td>
-													<td><pre>'.$value.'</pre></td>
-												</tr>
-				';
+				if(!is_array($value))
+				{
+					$output .= '
+													<tr>
+														<td class="debugtoolbar-table-first">'.$name.'</td>
+														<td><pre>'.$value.'</pre></td>
+													</tr>
+					';
+				}
+				else
+				{
+					$output .= '
+													<tr>
+														<td class="debugtoolbar-table-first">'.$name.'</td>
+					';
+					foreach ($value as $k => $v) {
+						$output .= '
+														<td>'.$k.' : <pre>'.$value.'</pre></td>
+						';
+					}
+					$output .= '
+													</tr>
+					';
+				}
 			}
 		}
 

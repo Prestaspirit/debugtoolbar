@@ -30,7 +30,7 @@ http://www.prestaspirit.fr
 
 @author Pichard Franck - PrestaSpirit <contact@prestaspirit.fr>
 
-@copyright  20010-2013 PrestaSpirit
+@copyright  2010-2013 PrestaSpirit
 
 CSS & JS [angelside](https://github.com/angelside)
 
