@@ -381,7 +381,7 @@ class DebugToolbar extends Module
 			if (file_exists(_PS_OVERRIDE_DIR_.'classes'.DS.'module'.DS.'Module.php'))
 				return true;
 
-			if(!copy(_PS_MODULE_DIR_.$moduleName.DS.'tools'.DS.'Module.php', _PS_OVERRIDE_DIR_.'classes'.DS.'module'.DS.'Module.php'))
+			if (!copy(_PS_MODULE_DIR_.$moduleName.DS.'tools'.DS.'Module.php', _PS_OVERRIDE_DIR_.'classes'.DS.'module'.DS.'Module.php'))
 				return false;
 			return true;
 		}

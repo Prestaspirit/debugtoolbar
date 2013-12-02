@@ -703,22 +703,24 @@ abstract class Controller extends ControllerCore
 		}
 		stream_context_set_default(array('http' => array('method' => 'HEAD')));
 		$url = getUrl();
-		$get_headers = get_headers($url, 1);
-		foreach ($get_headers as $name => $value)
+		if ($get_headers = get_headers($url, 1))
 		{
-			$output .= '
-											<tr>
-												<td class="debugtoolbar-table-first">'.$name.'</td>
-			';
-			if(is_array($value)) :
-				foreach ($value as $key => $vArr)
-					$output .= '					<td><pre>'.$vArr.'</pre></td>';
-			else :
-				$output .= '						<td><pre>'.$value.'</pre></td>';
-			endif;		
-			$output .= '
-											</tr>
-			';
+			foreach ($get_headers as $name => $value)
+			{
+				$output .= '
+												<tr>
+													<td class="debugtoolbar-table-first">'.$name.'</td>
+				';
+				if(is_array($value)) :
+					foreach ($value as $key => $vArr)
+						$output .= '					<td><pre>'.$vArr.'</pre></td>';
+				else :
+					$output .= '						<td><pre>'.$value.'</pre></td>';
+				endif;		
+				$output .= '
+												</tr>
+				';
+			}
 		}
 		$output .= '
 										</table>
