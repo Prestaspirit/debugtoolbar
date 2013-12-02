@@ -1,13 +1,13 @@
 language: php
 
 php:
-	- 5.3
-	- 5.4
+  - 5.3
+  - 5.4
 
 before_script:
-	- pyrus install pear/PHP_CodeSniffer
-	- phpenv rehash
-	- git clone --depth 1 git@github.com:PrestaShop/PrestaShop-norm-validator.git ../Prestashop && cd ../
+  - pyrus install pear/PHP_CodeSniffer
+  - phpenv rehash
+  - git clone --depth 1 git@github.com:PrestaShop/PrestaShop-norm-validator.git ../Prestashop && cd ../
 
 script:
-	- phpcs --standard=./Prestashop --warning-severity=99 ./Debugtoolbar
+  - phpcs --standard=./Prestashop --warning-severity=99 ./Debugtoolbar
