@@ -7,7 +7,7 @@ php:
 before_script:
   - pyrus install pear/PHP_CodeSniffer
   - phpenv rehash
-  - git clone --depth 1 git@github.com:PrestaShop/PrestaShop-norm-validator.git ../Prestashop && cd ../
+  - git clone --depth=1 --branch=master git://github.com/PrestaShop/PrestaShop-norm-validator.git ../Prestashop && cd ../
 
 script:
   - phpcs --standard=./Prestashop --warning-severity=99 ./Debugtoolbar
