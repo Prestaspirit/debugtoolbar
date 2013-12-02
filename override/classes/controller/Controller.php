@@ -100,41 +100,60 @@ function debug($debug, $name = null)
 */ 
 function FileSizeConvert($bytes)
 {
-    $bytes = floatval($bytes);
-        $arBytes = array(
-            0 => array(
-                "UNIT" => "tB",
-                "VALUE" => pow(1024, 4)
-            ),
-            1 => array(
-                "UNIT" => "gB",
-                "VALUE" => pow(1024, 3)
-            ),
-            2 => array(
-                "UNIT" => "mB",
-                "VALUE" => pow(1024, 2)
-            ),
-            3 => array(
-                "UNIT" => "kB",
-                "VALUE" => 1024
-            ),
-            4 => array(
-                "UNIT" => "bytes",
-                "VALUE" => 1
-            ),
-        );
+	$bytes = floatval($bytes);
+		$arBytes = array(
+			0 => array(
+				"UNIT" => "tB",
+				"VALUE" => pow(1024, 4)
+			),
+			1 => array(
+				"UNIT" => "gB",
+				"VALUE" => pow(1024, 3)
+			),
+			2 => array(
+				"UNIT" => "mB",
+				"VALUE" => pow(1024, 2)
+			),
+			3 => array(
+				"UNIT" => "kB",
+				"VALUE" => 1024
+			),
+			4 => array(
+				"UNIT" => "bytes",
+				"VALUE" => 1
+			),
+		);
 
-    $result = '';
-    foreach($arBytes as $arItem)
-    {
-        if($bytes >= $arItem["VALUE"])
-        {
-            $result = $bytes / $arItem["VALUE"];
-            $result = str_replace(".", "," , strval(round($result, 2)))." ".$arItem["UNIT"];
-            break;
-        }
-    }
-    return $result;
+	$result = '';
+	foreach($arBytes as $arItem)
+	{
+		if($bytes >= $arItem["VALUE"])
+		{
+			$result = $bytes / $arItem["VALUE"];
+			$result = str_replace(".", "," , strval(round($result, 2)))." ".$arItem["UNIT"];
+			break;
+		}
+	}
+	return $result;
+}
+
+if (!function_exists('getallheaders'))
+{
+	function getallheaders()
+	{
+		$headers = '';
+		foreach ($_SERVER as $name => $value)
+			if (substr($name, 0, 5) == 'HTTP_')
+				$headers[str_replace(' ', '-', ucwords(strtolower(str_replace('_', ' ', substr($name, 5)))))] = $value;
+		return $headers;
+	}
+}
+
+function getUrl() {
+	$url  = Tools::getShopDomain(true);
+	$url .= ( $_SERVER["SERVER_PORT"] !== 80 ) ? ":".$_SERVER["SERVER_PORT"] : "";
+	$url .= $_SERVER["REQUEST_URI"];
+	return $url;
 }
 
 abstract class Controller extends ControllerCore
@@ -683,7 +702,7 @@ abstract class Controller extends ControllerCore
 			';
 		}
 		stream_context_set_default(array('http' => array('method' => 'HEAD')));
-		$url = Tools::getShopProtocol().apache_getenv("HTTP_HOST") . apache_getenv("REQUEST_URI");
+		$url = getUrl();
 		$get_headers = get_headers($url, 1);
 		foreach ($get_headers as $name => $value)
 		{
