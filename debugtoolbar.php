@@ -59,7 +59,7 @@ class DebugToolbar extends Module
 					$this->context->controller->warning[] = $msg;
 			}
 
-			if($this->isEnable())
+			if ($this->isEnable())
 				$this->debugtoolbar = true;
 		}
 
@@ -103,7 +103,7 @@ class DebugToolbar extends Module
 			);
 
 			foreach ($filesOverrideRm as $file)
-				if(isset($file))
+				if (isset($file))
 					@unlink($file);
 
 			if (!parent::uninstall() ||
@@ -277,9 +277,9 @@ class DebugToolbar extends Module
 					return $this->l('Error configuration.');
 
 			// Ajoute la surcharge de la classe Module
-			if($this->checkOverrideFolderReadableWritable())
+			if ($this->checkOverrideFolderReadableWritable())
 			{
-				if(!$this->addOverrideModuleCore($this->name))
+				if (!$this->addOverrideModuleCore($this->name))
 					return $this->l('Error copy file.');
 				return true;
 			}
