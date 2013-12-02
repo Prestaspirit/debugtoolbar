@@ -758,13 +758,15 @@ abstract class Controller extends ControllerCore
 					$output .= '
 													<tr>
 														<td class="debugtoolbar-table-first">'.$name.'</td>
+														<td>
 					';
 					foreach ($value as $k => $v) {
 						$output .= '
-														<td>'.$k.' : <pre>'.$value.'</pre></td>
+															<pre>'.$k.' : '.$v.'</pre>
 						';
 					}
 					$output .= '
+														</td>
 													</tr>
 					';
 				}
