@@ -951,7 +951,7 @@ abstract class Controller extends ControllerCore
 													<td class="debugtoolbar-table-title" colspan="2"><strong>Email Setting</strong></td>
 												</tr>
 												<tr>
-													<td><pre>You are using the PHP mail function.</pre></td>
+													<td colspan="2"><pre>You are using the PHP mail function.</pre></td>
 												</tr>
 				';
 			else :
