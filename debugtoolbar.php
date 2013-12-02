@@ -99,12 +99,12 @@ class DebugToolbar extends Module
 				_PS_OVERRIDE_DIR_.'classes'.DS.'module'.DS.'Module.php',
 				_PS_OVERRIDE_DIR_.'classes'.DS.'ObjectModel.php',
 				_PS_OVERRIDE_DIR_.'classes'.DS.'db'.DS.'Db.php',
-				_PS_OVERRIDE_DIR_.'classes'.DS.'Tools.php',
 				_PS_OVERRIDE_DIR_.'classes'.DS.'Hook.php'
 			);
 
 			foreach ($filesOverrideRm as $file)
-				@unlink($file);
+				if(isset($file))
+					@unlink($file);
 
 			if (!parent::uninstall() ||
 				!$this->_deleteContent())
