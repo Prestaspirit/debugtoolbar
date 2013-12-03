@@ -23,7 +23,7 @@ Possibilité d'affiché un print_r dans la barre de débug en utilisant la fonct
 
 `debug('$this', 'Current Object');`
 
-Prestashop 1.5 seulement
+Prestashop 1.5 / 1.6
 
 
 ##### Crédits
@@ -37,6 +37,8 @@ http://www.prestaspirit.fr
 CSS & JS [angelside](https://github.com/angelside)
 
 Source [Profiler for Laravel 4](https://github.com/juy/profiler)
+
+Debug Bug Icon [Windows 8 Icon Pack By visualpharm](http://icons8.com/download-huge-windows8-set/)
 
 @version 1.0
 =======
