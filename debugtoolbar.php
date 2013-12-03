@@ -45,7 +45,7 @@ class DebugToolbar extends Module
 			$this->version                = '1.0';
 			$this->author                 = 'Prestaspirit';
 			$this->need_instance          = 1;
-			$this->ps_versions_compliancy = array('min' => '1.5', 'max' => '1.6');
+			$this->ps_versions_compliancy = array('min' => '1.5');
 			$this->module_key             = '';
 
 			parent::__construct();
