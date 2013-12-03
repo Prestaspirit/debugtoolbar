@@ -669,10 +669,10 @@ abstract class Controller extends ControllerCore
 												<tr>
 													<td class="debugtoolbar-table-first"><b '.$this->getObjectModelColor(count($info)).'>'.count($info).'</b></td>
 													<td><a href="#" onclick="$(\'#object_model_'.$i.'\').css(\'display\', $(\'#object_model_'.$i.'\').css(\'display\') == \'none\' ? \'block\' : \'none\'); return false" style="color:#0080b0">'.$class.'</a>
-														<div id="object_model_'.$i.'" style="display: none">';
+														<pre id="object_model_'.$i.'" style="display: none">';
 														foreach ($info as $trace)
 															$output .= ltrim(str_replace(array(_PS_ROOT_DIR_, '\\'), array('', '/'), $trace['file']), '/').' ['.$trace['line'].']<br />';
-														$output .=  '</div></td>
+														$output .=  '</pre></td>
 												</tr>
 				';
 			}
@@ -710,14 +710,7 @@ abstract class Controller extends ControllerCore
 				$output .= '
 												<tr>
 													<td class="debugtoolbar-table-first">'.$name.'</td>
-				';
-				if(is_array($value)) :
-					foreach ($value as $key => $vArr)
-						$output .= '					<td><pre>'.$vArr.'</pre></td>';
-				else :
-					$output .= '						<td><pre>'.$value.'</pre></td>';
-				endif;		
-				$output .= '
+													<td><pre>'.(is_array($value) ? $value[0] : $value).'</pre></td>
 												</tr>
 				';
 			}
