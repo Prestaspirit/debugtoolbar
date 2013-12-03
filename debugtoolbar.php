@@ -185,42 +185,84 @@ class DebugToolbar extends Module
 	 */
 		protected function _initForm()
 		{
-			$this->fields_options = array(
-				'general' => array(
-					'title' =>	$this->l('General'),
-					'image' =>	$this->getPathUri().'views/assets/img/AdminMaintenance.gif',
-					'fields' =>	array(
-						'MOD_DTB_ENABLE' => array(
-							'title' => $this->l('Enable Debug Toolbar'),
-							'desc' => $this->l('Enable or disable the debug toolbar.'),
-							'validation' => 'isBool',
-							'cast' => 'intval',
-							'type' => 'bool'
+			if (_PS_VERSION_ < '1.6')
+			{
+				$this->fields_options = array(
+					'general' => array(
+						'title' =>	$this->l('General'),
+						'image' =>	$this->getPathUri().'views/assets/img/AdminMaintenance.gif',
+						'fields' =>	array(
+							'MOD_DTB_ENABLE' => array(
+								'title' => $this->l('Enable Debug Toolbar'),
+								'desc' => $this->l('Enable or disable the debug toolbar.'),
+								'validation' => 'isBool',
+								'cast' => 'intval',
+								'type' => 'bool'
+							),
+							'MOD_DTB_IP' => array(
+								'title' => $this->l('Authorized IP'),
+								'desc' => $this->l('IP addresses authorized to view the debug toolbar. Please use a comma to separate them (e.g. 42.24.4.2,127.0.0.1,99.98.97.96)'),
+								'validation' => 'isGenericName',
+								'type' => 'debugtoolbar_ip',
+								'script_ip' => '
+								<script type="text/javascript">
+									function addRemoteAddr()
+									{
+										var length = $(\'input[name=MOD_DTB_IP]\').attr(\'value\').length;
+										if (length > 0)
+											$(\'input[name=MOD_DTB_IP]\').attr(\'value\',$(\'input[name=MOD_DTB_IP]\').attr(\'value\') +\','.Tools::getRemoteAddr().'\');
+										else
+											$(\'input[name=MOD_DTB_IP]\').attr(\'value\',\''.Tools::getRemoteAddr().'\');
+									}
+								</script>',
+								'link_remove_ip' => ' &nbsp<a href="#" class="button" onclick="addRemoteAddr(); return false;">'.$this->l('Add my IP', 'Helper').'</a>',
+								'size' => 30,
+								'default' => ''
+							),
 						),
-						'MOD_DTB_IP' => array(
-							'title' => $this->l('Authorized IP'),
-							'desc' => $this->l('IP addresses authorized to view the debug toolbar. Please use a comma to separate them (e.g. 42.24.4.2,127.0.0.1,99.98.97.96)'),
-							'validation' => 'isGenericName',
-							'type' => 'debugtoolbar_ip',
-							'script_ip' => '
-							<script type="text/javascript">
-								function addRemoteAddr()
-								{
-									var length = $(\'input[name=MOD_DTB_IP]\').attr(\'value\').length;
-									if (length > 0)
-										$(\'input[name=MOD_DTB_IP]\').attr(\'value\',$(\'input[name=MOD_DTB_IP]\').attr(\'value\') +\','.Tools::getRemoteAddr().'\');
-									else
-										$(\'input[name=MOD_DTB_IP]\').attr(\'value\',\''.Tools::getRemoteAddr().'\');
-								}
-							</script>',
-							'link_remove_ip' => ' &nbsp<a href="#" class="button" onclick="addRemoteAddr(); return false;">'.$this->l('Add my IP', 'Helper').'</a>',
-							'size' => 30,
-							'default' => ''
+						'submit' => array('title' => $this->l('Save'), 'class' => 'button'),
+					)
+				);
+			}
+			else
+			{
+				$this->bootstrap = true;
+				$this->fields_options = array(
+					'general' => array(
+						'title' =>	$this->l('General'),
+						'fields' =>	array(
+							'MOD_DTB_ENABLE' => array(
+								'title' => $this->l('Enable Debug Toolbar'),
+								'hint' => $this->l('Enable or disable the debug toolbar.'),
+								'validation' => 'isBool',
+								'cast' => 'intval',
+								'type' => 'bool'
+							),
+							'MOD_DTB_IP' => array(
+								'title' => $this->l('Authorized IP'),
+								'hint' => $this->l('IP addresses authorized to view the debug toolbar. Please use a comma to separate them (e.g. 42.24.4.2,127.0.0.1,99.98.97.96)'),
+								'validation' => 'isGenericName',
+								'type' => 'debugtoolbar_ip',
+								'script_ip' => '
+								<script type="text/javascript">
+									function addRemoteAddr()
+									{
+										var length = $(\'input[name=MOD_DTB_IP]\').attr(\'value\').length;
+										if (length > 0)
+											$(\'input[name=MOD_DTB_IP]\').attr(\'value\',$(\'input[name=MOD_DTB_IP]\').attr(\'value\') +\','.Tools::getRemoteAddr().'\');
+										else
+											$(\'input[name=MOD_DTB_IP]\').attr(\'value\',\''.Tools::getRemoteAddr().'\');
+									}
+								</script>',
+								'link_remove_ip' => '<button type="button" class="btn btn-default" onclick="addRemoteAddr();"><i class="icon-plus"></i> '.$this->l('Add my IP', 'Helper').'</button>',
+								'size' => 30,
+								'default' => ''
+							),
 						),
-					),
-					'submit' => array('title' => $this->l('Save'), 'class' => 'button'),
-				)
-			);
+						'submit' => array('title' => $this->l('Save'), 'class' => 'button'),
+					)
+				);
+			}
 
 			$helper = new HelperOptions($this);
 			$helper->id = $this->id;
@@ -235,12 +277,14 @@ class DebugToolbar extends Module
 			$helper->simple_header = true;
 			$helper->token = Tools::getAdminTokenLite('AdminModules');
 			$helper->toolbar_scroll = true;
+			$helper->base_tpl = ((_PS_VERSION_ < '1.6') ? $helper->base_tpl : 'options_1.6.tpl');
 			$helper->toolbar_btn = array(
 				'save' => array(
 					'href' => '#',
 					'desc' => $this->l('Save')
 				)
 			);
+
 			return $helper;
 		}
 
