@@ -3,7 +3,7 @@
 #### DebugToolbar Module by Prestaspirit.fr
 ---
 
-[![Build Status](https://travis-ci.org/Prestaspirit/Debugtoolbar.png?branch=master)](https://travis-ci.org/Prestaspirit/Debugtoolbar)
+[![Build Status](https://travis-ci.org/Prestaspirit/debugtoolbar.png?branch=master)](https://travis-ci.org/Prestaspirit/Debugtoolbar)
 
 ##### Preview
 ---
