@@ -10,4 +10,4 @@ before_script:
   - git clone --depth=1 --branch=master git://github.com/PrestaShop/PrestaShop-norm-validator.git ../Prestashop && cd ../
 
 script:
-  - phpcs --standard=./Prestashop --warning-severity=99 ./Debugtoolbar
+  - phpcs --standard=./Prestashop --warning-severity=99 ./debugtoolbar
