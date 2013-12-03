@@ -7,7 +7,18 @@
 
 ##### Preview
 ---
-![ScreenShot Preview](https://raw.github.com/Prestaspirit/Debugtoolbar/master/preview.png)
+![ScreenShot 1](https://raw.github.com/Prestaspirit/Debugtoolbar/master/screenshots/screenshots_1.jpg)
+![ScreenShot 2](https://raw.github.com/Prestaspirit/Debugtoolbar/master/screenshots/screenshots_2.jpg)
+![ScreenShot 3](https://raw.github.com/Prestaspirit/Debugtoolbar/master/screenshots/screenshots_3.jpg)
+![ScreenShot 4](https://raw.github.com/Prestaspirit/Debugtoolbar/master/screenshots/screenshots_4.jpg)
+![ScreenShot 5](https://raw.github.com/Prestaspirit/Debugtoolbar/master/screenshots/screenshots_5.jpg)
+![ScreenShot 6](https://raw.github.com/Prestaspirit/Debugtoolbar/master/screenshots/screenshots_6.jpg)
+![ScreenShot 7](https://raw.github.com/Prestaspirit/Debugtoolbar/master/screenshots/screenshots_7.jpg)
+![ScreenShot 8](https://raw.github.com/Prestaspirit/Debugtoolbar/master/screenshots/screenshots_8.jpg)
+![ScreenShot 9](https://raw.github.com/Prestaspirit/Debugtoolbar/master/screenshots/screenshots_9.jpg)
+![ScreenShot 10](https://raw.github.com/Prestaspirit/Debugtoolbar/master/screenshots/screenshots_10.jpg)
+![ScreenShot 11](https://raw.github.com/Prestaspirit/Debugtoolbar/master/screenshots/screenshots_11.jpg)
+![ScreenShot 12](https://raw.github.com/Prestaspirit/Debugtoolbar/master/screenshots/screenshots_12.jpg)
 
 
 ##### Fonctionnalités
