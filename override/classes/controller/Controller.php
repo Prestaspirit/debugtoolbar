@@ -156,6 +156,90 @@ function getUrl() {
 	return $url;
 }
 
+function smarty_modifier_debug_print_var ($var, $depth = 0, $length = 40)
+{
+    $_replace = array("\n" => '<i>\n</i>',
+        "\r" => '<i>\r</i>',
+        "\t" => '<i>\t</i>'
+        );
+
+    switch (gettype($var)) {
+        case 'array' :
+            $results = '<b>Array (' . count($var) . ')</b>';
+            foreach ($var as $curr_key => $curr_val) {
+                $results .= '<br>' . str_repeat('&nbsp;', $depth * 2)
+                 . '<b>' . strtr($curr_key, $_replace) . '</b> =&gt; '
+                 . smarty_modifier_debug_print_var($curr_val, ++$depth, $length);
+                $depth--;
+            } 
+            break;
+            
+        case 'object' :
+            $object_vars = get_object_vars($var);
+            $results = '<b>' . get_class($var) . ' Object (' . count($object_vars) . ')</b>';
+            foreach ($object_vars as $curr_key => $curr_val) {
+                $results .= '<br>' . str_repeat('&nbsp;', $depth * 2)
+                 . '<b> -&gt;' . strtr($curr_key, $_replace) . '</b> = '
+                 . smarty_modifier_debug_print_var($curr_val, ++$depth, $length);
+                $depth--;
+            } 
+            break;
+            
+        case 'boolean' :
+        case 'NULL' :
+        case 'resource' :
+            if (true === $var) {
+                $results = 'true';
+            } elseif (false === $var) {
+                $results = 'false';
+            } elseif (null === $var) {
+                $results = 'null';
+            } else {
+                $results = htmlspecialchars((string) $var);
+            } 
+            $results = '<i>' . $results . '</i>';
+            break;
+            
+        case 'integer' :
+        case 'float' :
+            $results = htmlspecialchars((string) $var);
+            break;
+            
+        case 'string' :
+            $results = strtr($var, $_replace);
+            if (Smarty::$_MBSTRING) {
+                if (mb_strlen($var, Smarty::$_CHARSET) > $length) {
+                    $results = mb_substr($var, 0, $length - 3, Smarty::$_CHARSET) . '...';
+                }
+            } else {
+                if (isset($var[$length])) {
+                    $results = substr($var, 0, $length - 3) . '...';
+                }
+            }
+
+            $results = htmlspecialchars('"' . $results . '"');
+            break;
+            
+        case 'unknown type' :
+        default :
+            $results = strtr((string) $var, $_replace);
+            if (Smarty::$_MBSTRING) {
+                if (mb_strlen($results, Smarty::$_CHARSET) > $length) {
+                    $results = mb_substr($results, 0, $length - 3, Smarty::$_CHARSET) . '...';
+                }
+            } else {
+                if (strlen($results) > $length) {
+                    $results = substr($results, 0, $length - 3) . '...';
+                }
+            }
+             
+            $results = htmlspecialchars($results);
+    } 
+
+    return $results;
+} 
+
+
 abstract class Controller extends ControllerCore
 {
 	public $_memory = array();
@@ -669,10 +753,10 @@ abstract class Controller extends ControllerCore
 												<tr>
 													<td class="debugtoolbar-table-first"><b '.$this->getObjectModelColor(count($info)).'>'.count($info).'</b></td>
 													<td><a href="#" onclick="$(\'#object_model_'.$i.'\').css(\'display\', $(\'#object_model_'.$i.'\').css(\'display\') == \'none\' ? \'block\' : \'none\'); return false" style="color:#0080b0">'.$class.'</a>
-														<div id="object_model_'.$i.'" style="display: none">';
+														<pre id="object_model_'.$i.'" style="display: none">';
 														foreach ($info as $trace)
 															$output .= ltrim(str_replace(array(_PS_ROOT_DIR_, '\\'), array('', '/'), $trace['file']), '/').' ['.$trace['line'].']<br />';
-														$output .=  '</div></td>
+														$output .=  '</pre></td>
 												</tr>
 				';
 			}
@@ -710,14 +794,7 @@ abstract class Controller extends ControllerCore
 				$output .= '
 												<tr>
 													<td class="debugtoolbar-table-first">'.$name.'</td>
-				';
-				if(is_array($value)) :
-					foreach ($value as $key => $vArr)
-						$output .= '					<td><pre>'.$vArr.'</pre></td>';
-				else :
-					$output .= '						<td><pre>'.$value.'</pre></td>';
-				endif;		
-				$output .= '
+													<td><pre>'.(is_array($value) ? $value[0] : $value).'</pre></td>
 												</tr>
 				';
 			}
@@ -1115,7 +1192,106 @@ abstract class Controller extends ControllerCore
 			';
 		endif;
 		/* /PS INFOS */
+	
 
+		/* SMARTY DEBUG */
+		$this->context->smarty->loadPlugin('Smarty_Internal_Debug');
+		// Smarty_Internal_Debug::display_debug($this->context->smarty);
+		$SID = new Smarty_Internal_Debug();
+		$obj = $this->context->smarty;
+		$ptr = $SID::get_debug_vars($obj);
+		if ($obj instanceof Smarty) {
+			$smarty = clone $obj;
+		} else {
+			$smarty = clone $obj->smarty;
+		}
+		$_assigned_vars = $ptr->tpl_vars;
+		ksort($_assigned_vars);
+		$_config_vars = $ptr->config_vars;
+		ksort($_config_vars);
+		$smarty->registered_filters = array();
+		$smarty->autoload_filters = array();
+		$smarty->default_modifiers = array();
+		$smarty->force_compile = false;
+		$smarty->left_delimiter = '{';
+		$smarty->right_delimiter = '}';
+		$smarty->debugging = false;
+		$smarty->force_compile = false;
+
+		
+		if ($obj instanceof Smarty_Internal_Template)
+			$template_name = $obj->source->type . ':' . $obj->source->name;
+		if ($obj instanceof Smarty)
+			$template_name = $SID::$template_data;
+		else
+			$template_name = null;
+
+		$execution_time = microtime(true) - $smarty->start_time;
+		$assigned_vars = $_assigned_vars;
+		$config_vars = $_config_vars;
+
+		// echo 'assigned_vars<pre>'.print_r($assigned_vars['SCRIPT_NAME'], true).'</pre>';die;
+
+		$output .= '				<div class="debugtoolbar-tab-pane debugtoolbar-table debugtoolbar-smarty-debug">';
+		$output .= '					<table>
+											<tr>
+												<th colspan="2">Smarty Debug Console  -  '.((isset($template_name) && count($template_name)) ? $template_name : 'Total Time '.number_format($execution_time, 5, '.', '')).'</th>
+											</tr>
+		';
+
+		if (isset($template_name) && count($template_name))
+		{
+			foreach ($template_name as $template)
+			{
+				$output .= '
+											<tr>
+												<td class="debugtoolbar-table-first"><font color=brown>'.$template['name'].'</font></td>
+												<td>
+													<span style="font-size: 0.8em;font-style: italic;">
+														'.number_format($template['compile_time'], 5, '.', '').' 
+														'.number_format($template['render_time'], 5, '.', '').' 
+														'.number_format($template['cache_time'], 5, '.', '').' 
+													</span>
+												</td>
+											</tr>
+				';
+			}
+		}
+		$output .= '
+											<tr>
+												<td class="debugtoolbar-table-title" colspan="2"><strong>Assigned template variables</strong></td>
+											</tr>
+		';
+		
+		foreach ($assigned_vars as $key => $vars)
+		{
+			$output .= '
+											<tr>
+												<td class="debugtoolbar-table-first">'.$key.'</td>
+												<td><pre>'.smarty_modifier_debug_print_var($vars).'</pre></td>
+											</tr>
+			';
+		}
+		$output .= '
+											<tr>
+												<td class="debugtoolbar-table-title" colspan="2"><trong>Assigned config file variables (outer template scope)</strong></td>
+											</tr>
+		';
+		
+		foreach ($config_vars as $key => $vars)
+		{
+			$output .= '
+											<tr>
+												<td class="debugtoolbar-table-first">'.$key.'</td>
+												<td><pre>'.smarty_modifier_debug_print_var($vars).'</pre></td>
+											</tr>
+			';
+		}
+		$output .= '
+										</table>
+		';
+		$output .= '				</div>';
+		/* SMARTY DEBUG */
 
 		$output .= '			</div>
 							</div>
@@ -1161,6 +1337,10 @@ abstract class Controller extends ControllerCore
 								<!-- PS INFOS -->
 								<li><a class="debugtoolbar-tab" data-debugtoolbar-tab="debugtoolbar-ps-info">Infos</a></li>
 								<!-- /PS INFOS -->
+
+								<!-- SMARTY DEBUG -->
+								<li><a class="debugtoolbar-tab" data-debugtoolbar-tab="debugtoolbar-smarty-debug">Smarty</a></li>
+								<!-- /SMARTY DEBUG -->
 		';
 		if(count($GLOBALS['debugtoolbar']))
 		{
