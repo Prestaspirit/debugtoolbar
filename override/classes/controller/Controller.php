@@ -337,6 +337,12 @@ abstract class Controller extends ControllerCore
 
 	public function __construct()
 	{
+		if (!class_exists('DebugToolbar'))
+			return parent::__construct();
+			
+		if (!DebugToolbar::isEnable())
+			return parent::__construct();
+		
 		parent::__construct();
 
 		// error management
