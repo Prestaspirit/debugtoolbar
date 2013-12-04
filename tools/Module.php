@@ -22,9 +22,23 @@ abstract class Module extends ModuleCore
 	 *
 	 * @return bool
 	 */
-	public function uninstallOverrides()
-	{
-		if ($this->name === 'debugtoolbar')
-			return true;
-	}
+		public function uninstallOverrides()
+		{
+			if ($this->name === 'debugtoolbar')
+				return true;
+			else
+			{
+				if (!is_dir($this->getLocalPath().'override'))
+					return true;
+
+				$result = true;
+				foreach (Tools::scandir($this->getLocalPath().'override', 'php', '', true) as $file)
+				{
+					$class = basename($file, '.php');
+					if (Autoload::getInstance()->getClassPath($class.'Core'))
+						$result &= $this->removeOverride($class);
+				}
+				return $result;
+			}
+		}
 }
