@@ -106,8 +106,7 @@ class DebugToolbar extends Module
 				if (isset($file))
 					@unlink($file);
 
-			if (!parent::uninstall() ||
-				!$this->_deleteContent())
+			if (!parent::uninstall() || !$this->_deleteContent())
 				return false;
 			return true;
 		}
@@ -166,8 +165,7 @@ class DebugToolbar extends Module
 	 */
 		private function _deleteContent()
 		{
-			if (!Configuration::deleteByName('MOD_DTB_ENABLE') ||
-				!Configuration::deleteByName('MOD_DTB_IP'))
+			if (!Configuration::deleteByName('MOD_DTB_ENABLE') || !Configuration::deleteByName('MOD_DTB_IP'))
 				return false;
 			return true;
 		}
@@ -329,7 +327,7 @@ class DebugToolbar extends Module
 			}
 			else
 				return $this->l('The override file is not writable, please change the permissions.');
-				
+
 		}
 
 
