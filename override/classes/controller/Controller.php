@@ -91,13 +91,13 @@ function debug($debug, $name = null)
 	$GLOBALS['debugtoolbar'] = (($name !== null) ? '<b>Debug var :</b> '.$name.'<br />' : '').'<pre>'.print_r($debug, true).'</pre>';
 }
 
-/** 
-* Converts bytes into human readable file size. 
-* 
-* @param string $bytes 
+/**
+* Converts bytes into human readable file size.
+*
+* @param string $bytes
 * @return string human readable file size (2,87 Мб)
-* @author Mogilev Arseny 
-*/ 
+* @author Mogilev Arseny
+*/
 function FileSizeConvert($bytes)
 {
 	$bytes = floatval($bytes);
@@ -171,9 +171,9 @@ function smarty_modifier_debug_print_var ($var, $depth = 0, $length = 40)
                  . '<b>' . strtr($curr_key, $_replace) . '</b> =&gt; '
                  . smarty_modifier_debug_print_var($curr_val, ++$depth, $length);
                 $depth--;
-            } 
+            }
             break;
-            
+
         case 'object' :
             $object_vars = get_object_vars($var);
             $results = '<b>' . get_class($var) . ' Object (' . count($object_vars) . ')</b>';
@@ -182,9 +182,9 @@ function smarty_modifier_debug_print_var ($var, $depth = 0, $length = 40)
                  . '<b> -&gt;' . strtr($curr_key, $_replace) . '</b> = '
                  . smarty_modifier_debug_print_var($curr_val, ++$depth, $length);
                 $depth--;
-            } 
+            }
             break;
-            
+
         case 'boolean' :
         case 'NULL' :
         case 'resource' :
@@ -196,15 +196,15 @@ function smarty_modifier_debug_print_var ($var, $depth = 0, $length = 40)
                 $results = 'null';
             } else {
                 $results = htmlspecialchars((string) $var);
-            } 
+            }
             $results = '<i>' . $results . '</i>';
             break;
-            
+
         case 'integer' :
         case 'float' :
             $results = htmlspecialchars((string) $var);
             break;
-            
+
         case 'string' :
             $results = strtr($var, $_replace);
             if (Smarty::$_MBSTRING) {
@@ -219,7 +219,7 @@ function smarty_modifier_debug_print_var ($var, $depth = 0, $length = 40)
 
             $results = htmlspecialchars('"' . $results . '"');
             break;
-            
+
         case 'unknown type' :
         default :
             $results = strtr((string) $var, $_replace);
@@ -232,12 +232,12 @@ function smarty_modifier_debug_print_var ($var, $depth = 0, $length = 40)
                     $results = substr($results, 0, $length - 3) . '...';
                 }
             }
-             
+
             $results = htmlspecialchars($results);
-    } 
+    }
 
     return $results;
-} 
+}
 
 
 abstract class Controller extends ControllerCore
@@ -337,12 +337,6 @@ abstract class Controller extends ControllerCore
 
 	public function __construct()
 	{
-		if (!class_exists('DebugToolbar'))
-			return parent::__construct();
-			
-		if (!DebugToolbar::isEnable())
-			return parent::__construct();
-		
 		parent::__construct();
 
 		// error management
@@ -368,7 +362,7 @@ abstract class Controller extends ControllerCore
 	{
 		if (!class_exists('DebugToolbar'))
 			return parent::run();
-			
+
 		if (!DebugToolbar::isEnable())
 			return parent::run();
 
@@ -420,7 +414,7 @@ abstract class Controller extends ControllerCore
 			if ($this->ajax)
 			{
 				$action = Tools::getValue('action');
-				if (!empty($action) && method_exists($this, 'displayAjax'.Tools::toCamelCase($action))) 
+				if (!empty($action) && method_exists($this, 'displayAjax'.Tools::toCamelCase($action)))
 					$this->{'displayAjax'.$action}();
 				elseif (method_exists($this, 'displayAjax'))
 					$this->displayAjax();
@@ -452,7 +446,7 @@ abstract class Controller extends ControllerCore
 				return (bool)(int)$b;
 		}
 	}
-	
+
 	private function sizeofvar($var)
 	{
 		$start_memory = memory_get_usage();
@@ -464,7 +458,7 @@ abstract class Controller extends ControllerCore
 		$size = memory_get_usage() - $start_memory;
 		return $size;
 	}
-	
+
 	private function getVarData($var)
 	{
 		if (is_object($var))
@@ -485,7 +479,7 @@ abstract class Controller extends ControllerCore
 			return;
 
 		$memory_peak_usage = memory_get_peak_usage();
-			
+
 		$hr = '<hr style="color:#F5F5F5;margin:2px" />';
 
 		$totalSize = 0;
@@ -639,7 +633,7 @@ abstract class Controller extends ControllerCore
 											<tr>
 												<td class="debugtoolbar-table-first">'.$i.'</td>
 												<td><pre>'.$f.'</pre></td>
-												<td>'.FileSizeConvert(filesize($file)).'</td>
+												<td>'.FileSizeConvert(@filesize($file)).'</td>
 											</tr>
 			';
 			$i++;
@@ -869,6 +863,27 @@ abstract class Controller extends ControllerCore
 		else
 		{
 			foreach ($get as $name => $value)
+			{
+				$output .= '
+												<tr>
+													<td class="debugtoolbar-table-first">'.$name.'</td>
+													<td><pre>'.$value.'</pre></td>
+												</tr>
+				';
+			}
+		}
+
+		$output .= '						<tr>
+												<td class="debugtoolbar-table-title" colspan="2">Server Data</td>
+											</tr>
+		';
+
+		$server = isset($_SERVER) ? $_SERVER : array();
+		if(!count($server))
+			$output .= '<tr><td colspan="2">No SERVER Data Found</td></tr>';
+		else
+		{
+			foreach ($server as $name => $value)
 			{
 				$output .= '
 												<tr>
@@ -1131,7 +1146,7 @@ abstract class Controller extends ControllerCore
 				$output .= '
 													<td><pre><span style="color:#90bd00;font-weight:bold;">OK</span></pre></td>
 				';
-			else : 
+			else :
 				$output .= '
 													<td>
 														<pre><span style="color:#ff4141;font-weight:bold;">Please fix the following error(s)</span></pre>
@@ -1156,7 +1171,7 @@ abstract class Controller extends ControllerCore
 				$output .= '
 													<td><pre><span style="color:#90bd00;font-weight:bold;">OK</span></pre></td>
 				';
-			else : 
+			else :
 				$output .= '
 													<td>
 														<pre><span style="color:#ff4141;font-weight:bold;">Please fix the following error(s)</span></pre>
@@ -1186,7 +1201,7 @@ abstract class Controller extends ControllerCore
 			$output .= '
 											</table>
 			';
-			$output .= '				</div>';		
+			$output .= '				</div>';
 		else :
 			$output .= '				<div class="debugtoolbar-tab-pane debugtoolbar-table debugtoolbar-ps-info">';
 			$output .= '					<table>
@@ -1198,7 +1213,7 @@ abstract class Controller extends ControllerCore
 			';
 		endif;
 		/* /PS INFOS */
-	
+
 
 		/* SMARTY DEBUG */
 		$this->context->smarty->loadPlugin('Smarty_Internal_Debug');
@@ -1224,7 +1239,7 @@ abstract class Controller extends ControllerCore
 		$smarty->debugging = false;
 		$smarty->force_compile = false;
 
-		
+
 		if ($obj instanceof Smarty_Internal_Template)
 			$template_name = $obj->source->type . ':' . $obj->source->name;
 		if ($obj instanceof Smarty)
@@ -1254,9 +1269,9 @@ abstract class Controller extends ControllerCore
 												<td class="debugtoolbar-table-first"><font color=brown>'.$template['name'].'</font></td>
 												<td>
 													<span style="font-size: 0.8em;font-style: italic;">
-														'.number_format($template['compile_time'], 5, '.', '').' 
-														'.number_format($template['render_time'], 5, '.', '').' 
-														'.number_format($template['cache_time'], 5, '.', '').' 
+														'.number_format($template['compile_time'], 5, '.', '').'
+														'.number_format($template['render_time'], 5, '.', '').'
+														'.number_format($template['cache_time'], 5, '.', '').'
 													</span>
 												</td>
 											</tr>
@@ -1268,7 +1283,7 @@ abstract class Controller extends ControllerCore
 												<td class="debugtoolbar-table-title" colspan="2"><strong>Assigned template variables</strong></td>
 											</tr>
 		';
-		
+
 		foreach ($assigned_vars as $key => $vars)
 		{
 			$output .= '
@@ -1283,7 +1298,7 @@ abstract class Controller extends ControllerCore
 												<td class="debugtoolbar-table-title" colspan="2"><trong>Assigned config file variables (outer template scope)</strong></td>
 											</tr>
 		';
-		
+
 		foreach ($config_vars as $key => $vars)
 		{
 			$output .= '
@@ -1299,9 +1314,49 @@ abstract class Controller extends ControllerCore
 		$output .= '				</div>';
 		/* SMARTY DEBUG */
 
+		/* ADMINER */
+		if (isset($this->context->employee->id)) :
+		$output .= '				<div class="debugtoolbar-tab-pane debugtoolbar-table debugtoolbar-adminer">';
+		$output .= '					<table>
+											<tr>
+												<th>Adminer</th>
+											</tr>
+		';
+		$output .= '
+											<tr>
+												<td colspan="2">
+												<iframe src="'.Tools::getShopDomain(true).'/modules/debugtoolbar/tools/adminer/display.php?server='._DB_SERVER_.'&username='._DB_USER_.'&db='._DB_NAME_.'" frameborder="0" height="880" width="100%" id="adminerFrame"></iframe>
+													<script type="text/javascript">
+														$(\'#adminerFrame\').load(function(){
+															$self = $(this).contents();
+															$self.find("input[name=\'auth[server]\']").val("'._DB_SERVER_.'");
+															$self.find("input[name=\'auth[username]\']").val("'._DB_USER_.'");
+															$self.find("input[name=\'auth[password]\']").val("'._DB_PASSWD_.'");
+															$self.find("input[name=\'auth[db]\']").val("'._DB_NAME_.'");
+														});
+													</script>
+												</td>
+											</tr>
+		';
+		$output .= '
+										</table>
+		';
+		$output .= '				</div>';
+		else :
+			$output .= '				<div class="debugtoolbar-tab-pane debugtoolbar-table debugtoolbar-adminer">';
+			$output .= '					<table>
+												<tr>
+													<td><pre><span style="color:#ff4141;font-weight:bold;">Not display in Front office</span></pre></td>
+												</tr>
+											</table>
+										</div>
+			';
+		endif;
+		/* /ADMINER */
+
 		$output .= '			</div>
 							</div>
-						
+
 							<ul id="debugtoolbar-open-tabs" class="debugtoolbar-tabs">
 
 								<!-- LOAD TIME -->
@@ -1347,6 +1402,10 @@ abstract class Controller extends ControllerCore
 								<!-- SMARTY DEBUG -->
 								<li><a class="debugtoolbar-tab" data-debugtoolbar-tab="debugtoolbar-smarty-debug">Smarty</a></li>
 								<!-- /SMARTY DEBUG -->
+
+								<!-- ADMINER -->
+								<li><a class="debugtoolbar-tab" data-debugtoolbar-tab="debugtoolbar-adminer">Adminer</a></li>
+								<!-- /ADMINER -->
 		';
 		if(count($GLOBALS['debugtoolbar']))
 		{
