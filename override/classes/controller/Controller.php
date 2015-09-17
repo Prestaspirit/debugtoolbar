@@ -150,7 +150,7 @@ if (!function_exists('getallheaders'))
 }
 
 function getUrl() {
-	$url  = Tools::getShopDomain(true);
+	$url  = Tools::getShopDomainSsl(true);
 	$url .= ( $_SERVER["SERVER_PORT"] !== 80 ) ? ":".$_SERVER["SERVER_PORT"] : "";
 	$url .= $_SERVER["REQUEST_URI"];
 	return $url;
@@ -517,7 +517,7 @@ abstract class Controller extends ControllerCore
 		$totalCacheSize = $this->sizeofvar($cache);
 
 		$output = '';
-		$output .= '<link href="'.Tools::getShopDomain(true).'/modules/debugtoolbar/views/assets/css/debugtoolbar.css" rel="stylesheet" type="text/css" media="all">';
+		$output .= '<link href="'.Tools::getHttpHost(true).__PS_BASE_URI__.'modules/debugtoolbar/views/assets/css/debugtoolbar.css" rel="stylesheet" type="text/css" media="all">';
 
 		$output .= '	<div class="debugtoolbar">
 
@@ -1325,7 +1325,7 @@ abstract class Controller extends ControllerCore
 		$output .= '
 											<tr>
 												<td colspan="2">
-												<iframe src="'.Tools::getShopDomain(true).'/modules/debugtoolbar/tools/adminer/display.php?server='._DB_SERVER_.'&username='._DB_USER_.'&db='._DB_NAME_.'" frameborder="0" height="880" width="100%" id="adminerFrame"></iframe>
+												<iframe src="'.Tools::getHttpHost(true).__PS_BASE_URI__.'modules/debugtoolbar/tools/adminer/display.php?server='._DB_SERVER_.'&username='._DB_USER_.'&db='._DB_NAME_.'" frameborder="0" height="880" width="100%" id="adminerFrame"></iframe>
 													<script type="text/javascript">
 														$(\'#adminerFrame\').load(function(){
 															$self = $(this).contents();
@@ -1427,7 +1427,7 @@ abstract class Controller extends ControllerCore
 
 						</div>
 		';
-		$output .= '<script type="text/javascript" src="'.Tools::getShopDomain(true).'/modules/debugtoolbar/views/assets/js/debugtoolbar.js"></script>';
+		$output .= '<script type="text/javascript" src="'.Tools::getHttpHost(true).__PS_BASE_URI__.'modules/debugtoolbar/views/assets/js/debugtoolbar.js"></script>';
 
 		echo $output;
 	}

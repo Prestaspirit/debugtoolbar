@@ -44,7 +44,7 @@ class Hook extends HookCore
 		return self::$hookMemoryUsage;
 	}
 	
-	public static function exec($hook_name, $hook_args = array(), $id_module = null, $array_return = false, $check_exceptions = true)
+	public static function exec($hook_name, $hook_args = array(), $id_module = null, $array_return = false, $check_exceptions = true, $use_push = false, $id_shop = null)
 	{
 		$memoryUsage = memory_get_usage();
 		$t0 = microtime(true);
